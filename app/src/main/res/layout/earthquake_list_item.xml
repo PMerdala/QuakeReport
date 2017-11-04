@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="8dp"
+    android:id="@+id/quake_item_id">
+
+    <TextView
+        android:layout_width="@dimen/quake_item_height"
+        android:layout_height="@dimen/magnitude_width"
+        android:gravity="center"
+        android:textSize="20sp"
+        android:textColor="@color/magnitude_text_view"
+        android:shadowColor="@color/magnitude_high"
+        android:shadowRadius="10.0"
+        android:background="@drawable/circle"
+        tools:text="6.4"
+        android:id="@+id/magnitude_text_view"
+        />
+    <LinearLayout
+        android:layout_weight="10"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="4dp"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="0dp"
+            android:gravity="bottom"
+            tools:text="27 KM sse of"
+            android:textSize="12sp"
+            android:textColor="@color/range_text_view"
+            android:id="@+id/range_text_view"
+            android:textAllCaps="true"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="0dp"
+            android:gravity="top"
+            tools:text="Sary-Tash,Kyrgyzstan"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:id="@+id/location_text_view"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_weight="3.3"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="4dp"
+        android:orientation="vertical">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        tools:text="Sep 26, 2016"
+        android:gravity="bottom"
+        android:textSize="12sp"
+        android:textColor="@color/datetime_text_view"
+        android:id="@+id/date_text_view"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            tools:text="4:17 AM"
+            android:gravity="top"
+            android:textSize="12sp"
+            android:textColor="@color/datetime_text_view"
+            android:id="@+id/time_text_view"/>
+    </LinearLayout>
+</LinearLayout>
