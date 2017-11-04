@@ -1,5 +1,6 @@
 package com.example.pmerdala.quakereport;
 
+import android.text.TextUtils;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -41,21 +42,27 @@ public class QueryUtils {
      * parsing a JSON response.
      */
     public static ArrayList<EarthquakeData> extractEarthquakes() {
+        return extractEarthquakes(SAMPLE_JSON_RESPONSE);
+    }
+
+    public static ArrayList<EarthquakeData> extractEarthquakes(String json) {
         ArrayList<EarthquakeData> earthquakes = new ArrayList<>();
-        try {
-            JSONObject root = new JSONObject(SAMPLE_JSON_RESPONSE);
-            JSONArray jsonEarthquakes = root.getJSONArray("features");
-            for (int i = 0; i < jsonEarthquakes.length(); i++) {
-                JSONObject propeties = jsonEarthquakes.getJSONObject(i).getJSONObject("properties");
-                float mag = Float.parseFloat(propeties.getString("mag"));
-                String place = propeties.getString("place");
-                long datetime = propeties.getLong("time");
-                String url=propeties.getString("url");
-                EarthquakeData earthquakeData = new EarthquakeData(mag,place,datetime,url);
-                earthquakes.add(earthquakeData);
+        if (!TextUtils.isEmpty(json)) {
+            try {
+                JSONObject root = new JSONObject(json);
+                JSONArray jsonEarthquakes = root.getJSONArray("features");
+                for (int i = 0; i < jsonEarthquakes.length(); i++) {
+                    JSONObject propeties = jsonEarthquakes.getJSONObject(i).getJSONObject("properties");
+                    float mag = Float.parseFloat(propeties.getString("mag"));
+                    String place = propeties.getString("place");
+                    long datetime = propeties.getLong("time");
+                    String url = propeties.getString("url");
+                    EarthquakeData earthquakeData = new EarthquakeData(mag, place, datetime, url);
+                    earthquakes.add(earthquakeData);
+                }
+            } catch (JSONException e) {
+                Log.e("QueryUtils", "Problem parsing the earthquake JSON results", e);
             }
-        } catch (JSONException e) {
-            Log.e("QueryUtils", "Problem parsing the earthquake JSON results", e);
         }
         return earthquakes;
     }
