@@ -18,15 +18,16 @@ public class EarthquakeData {
     final float magnitude;
     final String place;
     final long miliseconds;
-    final static DateFormat inputDateFormater = new SimpleDateFormat("MMM dd, yyyy h:mm a", Locale.ENGLISH);
+    final String url;
 
-    public EarthquakeData(float magnitude, String place, long miliseconds) {
+    public EarthquakeData(float magnitude, String place, long miliseconds,String url) {
         this.magnitude = magnitude;
         this.place = place;
         this.miliseconds = miliseconds;
+        this.url = url;
     }
 
-    public EarthquakeData(float magnitude, String place, Date datetime) {
+    public EarthquakeData(float magnitude, String place, Date datetime,String url) {
         this.magnitude = magnitude;
         this.place = place;
         if (datetime != null) {
@@ -34,9 +35,11 @@ public class EarthquakeData {
         } else {
             this.miliseconds = new Date().getTime();
         }
+        this.url = url;
     }
 
-    public EarthquakeData(float magnitude, String place, String datetime) {
+    public EarthquakeData(float magnitude, String place, String datetime,String url) {
+        DateFormat inputDateFormater = new SimpleDateFormat("MMM dd, yyyy h:mm a", Locale.ENGLISH);
         this.magnitude = magnitude;
         this.place = place;
         Date tempDatetime;
@@ -56,6 +59,7 @@ public class EarthquakeData {
         } else {
             this.miliseconds = new Date().getTime();
         }
+        this.url = url;
     }
 
     public float getMagnitude() {
@@ -96,4 +100,6 @@ public class EarthquakeData {
     public long getMiliseconds(){
         return miliseconds;
     }
+
+    public String getUrl(){ return  url;}
 }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="quake_item_height">40dp</dimen>
-    <dimen name="magnitude_width">40dp</dimen>
+    <dimen name="quake_item_height">36dp</dimen>
+    <dimen name="magnitude_width">36dp</dimen>
+    <dimen name="earthquake_list_item_padding">16dp</dimen>
 </resources>
