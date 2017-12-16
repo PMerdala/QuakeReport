@@ -19,15 +19,21 @@ public class EarthquakeData {
     final String place;
     final long miliseconds;
     final String url;
+    final String urlDetail;
+    final String title;
+    final long felt;
 
-    public EarthquakeData(float magnitude, String place, long miliseconds,String url) {
+    public EarthquakeData(float magnitude, String place, long miliseconds,String url,String urlDetail,String title,long felt) {
         this.magnitude = magnitude;
         this.place = place;
         this.miliseconds = miliseconds;
         this.url = url;
+        this.urlDetail = urlDetail;
+        this.title = title;
+        this.felt = felt;
     }
 
-    public EarthquakeData(float magnitude, String place, Date datetime,String url) {
+    public EarthquakeData(float magnitude, String place, Date datetime,String url,String urlDetail,String title,long felt) {
         this.magnitude = magnitude;
         this.place = place;
         if (datetime != null) {
@@ -36,9 +42,16 @@ public class EarthquakeData {
             this.miliseconds = new Date().getTime();
         }
         this.url = url;
+        this.urlDetail = urlDetail;
+        this.title = title;
+        this.felt = felt;
     }
 
-    public EarthquakeData(float magnitude, String place, String datetime,String url) {
+    public long getFelt() {
+        return felt;
+    }
+
+    public EarthquakeData(float magnitude, String place, String datetime, String url, String urlDetail, String title, long felt) {
         DateFormat inputDateFormater = new SimpleDateFormat("MMM dd, yyyy h:mm a", Locale.ENGLISH);
         this.magnitude = magnitude;
         this.place = place;
@@ -60,6 +73,17 @@ public class EarthquakeData {
             this.miliseconds = new Date().getTime();
         }
         this.url = url;
+        this.urlDetail = urlDetail;
+        this.title = title;
+        this.felt = felt;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getUrlDetail() {
+        return urlDetail;
     }
 
     public float getMagnitude() {

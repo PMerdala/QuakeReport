@@ -40,7 +40,7 @@ public class EarthquakeActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 EarthquakeData data = (EarthquakeData) parent.getAdapter().getItem(position);
-                openBrowsel(data.getUrl());
+                openDetail(data.getUrlDetail());
             }
         });
         QuakeReportAsyncTask task = new QuakeReportAsyncTask(this);
@@ -69,6 +69,12 @@ public class EarthquakeActivity extends AppCompatActivity {
 //        return QueryUtils.extractEarthquakes();
 //    }
 
+    private void openDetail(String url){
+        Intent intent = new Intent(this,EarthquakeDetailActivity.class);
+        intent.putExtra("url",url);
+        startActivity(intent);
+    }
+
     private void openBrowsel(String url) {
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setData(Uri.parse(url));
@@ -79,9 +85,12 @@ public class EarthquakeActivity extends AppCompatActivity {
         }
     }
 
+    public void changeToDetail(View view) {
+        UtilIntent.executeIntent(this,EarthquakeDetailActivity.class);
+    }
+
     private class QuakeReportAsyncTask extends AsyncTask<String, Void, ArrayList<EarthquakeData>> {
 
-        final static String HTTP_REQUEST_METHOD = "GET";
         final Activity activity;
 
         private QuakeReportAsyncTask(Activity activity) {
@@ -93,11 +102,11 @@ public class EarthquakeActivity extends AppCompatActivity {
             if (urls == null || urls.length == 0) {
                 return new ArrayList<>();
             }
-            URL url = createURL(urls[0]);
+            URL url = QueryUtils.createURL(urls[0]);
             if (url==null){
                 return new ArrayList<>();
             }
-            String jsonResponse = makeHttpRequests(url);
+            String jsonResponse =QueryUtils.makeHttpRequests(url);
             ArrayList<EarthquakeData> earthquakes = QueryUtils.extractEarthquakes(jsonResponse);
             return earthquakes;
         }
@@ -114,62 +123,7 @@ public class EarthquakeActivity extends AppCompatActivity {
         }
 
 
-        private URL createURL(String requestUrl){
-            URL url = null;
-            try {
-                url = new URL(requestUrl);
-            } catch (MalformedURLException e) {
-                Log.e(QuakeReportAsyncTask.class.getSimpleName(), e.getLocalizedMessage(), e);
-            }
-            return url;
-        }
 
-        private String makeHttpRequests(URL url) {
-            HttpURLConnection connection = null;
-            InputStream inputStream = null;
-            String jsonResponse = null;
-            try {
-                connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod(HTTP_REQUEST_METHOD);
-                connection.setConnectTimeout(15000);
-                connection.setReadTimeout(10000);
-                connection.connect();
-                if (connection.getResponseCode()==200) {
-                    inputStream = connection.getInputStream();
-                    jsonResponse = readFromStream(inputStream);
-                }else{
-                    Log.e(QuakeReportAsyncTask.class.getSimpleName(), "niewłaściwy status odpowiedzi=" + connection.getResponseCode() + " " + connection.getResponseMessage());
-                }
-            } catch (IOException e) {
-                Log.e(QuakeReportAsyncTask.class.getSimpleName(), e.getLocalizedMessage(), e);
-            } finally {
-                if (inputStream != null) {
-                    try {
-                        inputStream.close();
-                    } catch (IOException e) {
-                        Log.e(QuakeReportAsyncTask.class.getSimpleName(), e.getLocalizedMessage(), e);
-                    }
-                }
-                if (connection != null) {
-                    connection.disconnect();
-                }
-            }
-            return jsonResponse;
-        }
 
-        private String readFromStream(InputStream inputStream) throws IOException {
-            if (inputStream == null) {
-                return null;
-            }
-            StringBuilder json = new StringBuilder();
-            InputStreamReader reader = new InputStreamReader(inputStream, Charset.forName("UTF-8"));
-            BufferedReader bufferedReader = new BufferedReader(reader);
-            String line = bufferedReader.readLine();
-            while (line != null){
-                json.append(line);
-                line = bufferedReader.readLine();
-            }
-            return json.toString();
-        }
     }
 }

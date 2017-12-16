@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_margin="8dp">
+
+    <TextView
+        android:layout_marginTop="8dp"
+        android:id="@+id/detail_title_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        tools:text="M 7.8 - 29 km  SSE of Muisne, Ecuador"
+        android:textSize="18sp"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:layout_marginTop="24dp"
+        android:gravity="center_horizontal"
+        android:id="@+id/detail_perceived_strength_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Perceived Strength"
+        android:textAllCaps="true"
+        android:textSize="20sp"/>
+    <TextView
+        android:id="@+id/detail_mag_tv"
+        android:layout_marginTop="16dp"
+        android:layout_width="192dp"
+        android:layout_height="192dp"
+        android:background="@drawable/circle"
+        android:gravity="center_horizontal|center_vertical"
+        android:layout_gravity="center_horizontal"
+        tools:text="5.1"
+        android:textSize="96sp"
+        />
+    <TextView
+        android:id="@+id/detail_felt_tv"
+        android:layout_marginTop="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="183 People felt it"
+        android:gravity="center_horizontal"
+        android:textAllCaps="true"
+        android:textSize="20sp"/>
+
+</LinearLayout>

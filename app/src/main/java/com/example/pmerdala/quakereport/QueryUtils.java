@@ -1,5 +1,7 @@
 package com.example.pmerdala.quakereport;
 
+import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -7,6 +9,18 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.charset.Charset;
+import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -37,12 +51,133 @@ public class QueryUtils {
     private QueryUtils() {
     }
 
+    final static String HTTP_REQUEST_METHOD = "GET";
+
     /**
      * Return a list of {@link EarthquakeData} objects that has been built up from
      * parsing a JSON response.
      */
     public static ArrayList<EarthquakeData> extractEarthquakes() {
         return extractEarthquakes(SAMPLE_JSON_RESPONSE);
+    }
+
+    private static String readFromStream(InputStream inputStream) throws IOException {
+        if (inputStream == null) {
+            return null;
+        }
+        StringBuilder json = new StringBuilder();
+        InputStreamReader reader = new InputStreamReader(inputStream, Charset.forName("UTF-8"));
+        BufferedReader bufferedReader = new BufferedReader(reader);
+        String line = bufferedReader.readLine();
+        while (line != null) {
+            json.append(line);
+            line = bufferedReader.readLine();
+        }
+        return json.toString();
+    }
+
+    public static URL createURL(String requestUrl) {
+        URL url = null;
+        try {
+            url = new URL(requestUrl);
+        } catch (MalformedURLException e) {
+            Log.e(QueryUtils.class.getSimpleName(), e.getLocalizedMessage(), e);
+        }
+        return url;
+    }
+
+
+    public static String makeHttpRequests(URL url) {
+        HttpURLConnection connection = null;
+        InputStream inputStream = null;
+        String jsonResponse = null;
+        try {
+            connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod(HTTP_REQUEST_METHOD);
+            connection.setConnectTimeout(15000);
+            connection.setReadTimeout(10000);
+            connection.connect();
+            if (connection.getResponseCode() == 200) {
+                inputStream = connection.getInputStream();
+                jsonResponse = readFromStream(inputStream);
+            } else {
+                Log.e(QueryUtils.class.getSimpleName(), "niewłaściwy status odpowiedzi=" + connection.getResponseCode() + " " + connection.getResponseMessage());
+            }
+        } catch (IOException e) {
+            Log.e(QueryUtils.class.getSimpleName(), e.getLocalizedMessage(), e);
+        } finally {
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    Log.e(QueryUtils.class.getSimpleName(), e.getLocalizedMessage(), e);
+                }
+            }
+            if (connection != null) {
+                connection.disconnect();
+            }
+        }
+        return jsonResponse;
+    }
+
+    private static long getLongField(JSONObject propeties, String fieldName, long defaultValue) {
+        String tempString=null;
+        long longValue = defaultValue;
+        try {
+            if (propeties.has(fieldName)) {
+                tempString = propeties.getString(fieldName);
+                if (!propeties.isNull(fieldName) && (!tempString.isEmpty()) && !"null".equals(tempString)) {
+                    longValue = Long.valueOf(tempString);
+                }
+            }
+        } catch (JSONException e) {
+            Log.e("QueryUtils", fieldName+ "=["+ tempString + "]. Problem parsing the earthquake JSON results", e);
+        } catch (NumberFormatException e){
+            Log.e("QueryUtils", fieldName+ "=["+ tempString + "]. Problem parsing NumberFormatException the earthquake JSON results", e);
+        }
+        return longValue;
+    }
+
+    private static float getFloatField(JSONObject propeties, String fieldName, float defaultValue) {
+        String tempString=null;
+        float floatValue = defaultValue;
+        try {
+            if (propeties.has(fieldName)) {
+                tempString = propeties.getString(fieldName);
+                if (!propeties.isNull(fieldName) && (!tempString.isEmpty()) && !"null".equals(tempString)) {
+                    floatValue = Float.parseFloat(tempString);
+                }
+            }
+        } catch (JSONException e) {
+            Log.e("QueryUtils", fieldName+ "=["+ tempString + "]. Problem parsing the earthquake JSON results", e);
+        } catch (NumberFormatException e){
+            Log.e("QueryUtils", fieldName+ "=["+ tempString + "]. Problem parsing NumberFormatException the earthquake JSON results", e);
+        }
+        return floatValue;
+    }
+
+    private static EarthquakeData getEarthquake(JSONObject propeties, String urlDetailDefault) {
+        EarthquakeData earthquakeData = null;
+
+        try {
+            float mag = getFloatField(propeties,"mag",0);
+            String place = propeties.getString("place");
+            long datetime = getLongField(propeties, "time", 0);
+            long felt = getLongField(propeties, "felt", 0);
+            String url = propeties.getString("url");
+            String urlDetail;
+            if (propeties.has("detail") && !propeties.isNull("detail") && !propeties.getString("detail").isEmpty()) {
+                urlDetail = propeties.getString("detail");
+            } else {
+                urlDetail = urlDetailDefault;
+            }
+            String title = propeties.getString("title");
+            earthquakeData = new EarthquakeData(mag, place, datetime, url, urlDetail, title, felt);
+        } catch (JSONException e) {
+            Log.e("QueryUtils", "Problem parsing the earthquake JSON results", e);
+        }
+        return earthquakeData;
+
     }
 
     public static ArrayList<EarthquakeData> extractEarthquakes(String json) {
@@ -53,12 +188,7 @@ public class QueryUtils {
                 JSONArray jsonEarthquakes = root.getJSONArray("features");
                 for (int i = 0; i < jsonEarthquakes.length(); i++) {
                     JSONObject propeties = jsonEarthquakes.getJSONObject(i).getJSONObject("properties");
-                    float mag = Float.parseFloat(propeties.getString("mag"));
-                    String place = propeties.getString("place");
-                    long datetime = propeties.getLong("time");
-                    String url = propeties.getString("url");
-                    EarthquakeData earthquakeData = new EarthquakeData(mag, place, datetime, url);
-                    earthquakes.add(earthquakeData);
+                    earthquakes.add(getEarthquake(propeties, null));
                 }
             } catch (JSONException e) {
                 Log.e("QueryUtils", "Problem parsing the earthquake JSON results", e);
@@ -66,4 +196,73 @@ public class QueryUtils {
         }
         return earthquakes;
     }
+
+    public static EarthquakeData extractEarthquake(String json, String urlDetailDefault) {
+        EarthquakeData earthquakeData = null;
+        if (!TextUtils.isEmpty(json)) {
+            try {
+                JSONObject root = new JSONObject(json);
+                JSONObject propeties = root.getJSONObject("properties");
+                earthquakeData = getEarthquake(propeties, urlDetailDefault);
+            } catch (JSONException e) {
+                Log.e("QueryUtils", "Problem parsing the earthquake JSON results", e);
+            }
+        }
+        return earthquakeData;
+    }
+
+    public static String getFormatMagniture(float magniture) {
+        NumberFormat numberFormat = new DecimalFormat("#0.0");
+        return numberFormat.format(magniture);
+    }
+
+    public static String getFormatDate(Date date) {
+        DateFormat dateFormater = new SimpleDateFormat("MMM dd, yyyy");
+        return dateFormater.format(date);
+    }
+
+    public static String getFormatTime(Date date) {
+        DateFormat timeFormater = new SimpleDateFormat("h:mm a");
+        return timeFormater.format(date);
+    }
+
+
+    public static int getColorMagniture(float magniture, Context context) {
+        int circleColor = R.color.magnitude1;
+        switch (Float.valueOf(magniture).intValue()) {
+            case 10:
+                circleColor = R.color.magnitude10plus;
+                break;
+            case 9:
+                circleColor = R.color.magnitude9;
+                break;
+            case 8:
+                circleColor = R.color.magnitude8;
+                break;
+            case 7:
+                circleColor = R.color.magnitude7;
+                break;
+            case 6:
+                circleColor = R.color.magnitude6;
+                break;
+            case 5:
+                circleColor = R.color.magnitude5;
+                break;
+            case 4:
+                circleColor = R.color.magnitude4;
+                break;
+            case 3:
+                circleColor = R.color.magnitude3;
+                break;
+            case 2:
+                circleColor = R.color.magnitude2;
+                break;
+            case 1:
+            default:
+                circleColor = R.color.magnitude1;
+                break;
+        }
+        return ContextCompat.getColor(context, circleColor);
+    }
+
 }

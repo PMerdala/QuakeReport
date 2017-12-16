@@ -2,22 +2,14 @@ package com.example.pmerdala.quakereport;
 
 import android.content.Context;
 import android.graphics.drawable.GradientDrawable;
-import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import java.net.URL;
-import java.text.DateFormat;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -50,9 +42,9 @@ public class EarthquakeListAdaper extends ArrayAdapter<EarthquakeData> {
         TextView dateTextView = (TextView) view.findViewById(R.id.date_text_view);
         TextView timeTextView = (TextView) view.findViewById(R.id.time_text_view);
         if (magnitudeTextView != null) {
-            magnitudeTextView.setText(getFormatMagniture(data.getMagnitude()));
+            magnitudeTextView.setText(QueryUtils.getFormatMagniture(data.getMagnitude()));
             GradientDrawable magnitudeCircle = (GradientDrawable) magnitudeTextView.getBackground();
-            int magnitudeColor = getColorMagniture(data.getMagnitude());
+            int magnitudeColor = QueryUtils.getColorMagniture(data.getMagnitude(),getContext());
             magnitudeCircle.setColor(magnitudeColor);
         }
         if (rangeTextView != null) {
@@ -62,56 +54,23 @@ public class EarthquakeListAdaper extends ArrayAdapter<EarthquakeData> {
             locationTextView.setText(data.getLocation());
         }
         if (dateTextView != null) {
-            dateTextView.setText(getFormatDate(data.getDatetime()));
+            if (data.getMiliseconds()==0) {
+                dateTextView.setText("Brak");
+            }else{
+                dateTextView.setText(QueryUtils.getFormatDate(data.getDatetime()));
+            }
         }
         if (timeTextView != null) {
-            timeTextView.setText(getFormatTime(data.getDatetime()));
+            if (data.getMiliseconds()==0) {
+                timeTextView.setText("Brak");
+            }else {
+                timeTextView.setText(QueryUtils.getFormatTime(data.getDatetime()));
+            }
         }
 
     }
 
-    private String getFormatMagniture(float magniture){
-        NumberFormat numberFormat = new DecimalFormat("#0.0");
-        return numberFormat.format(magniture);
-    }
 
-    private String getFormatDate(Date date){
-        DateFormat dateFormater = new SimpleDateFormat("MMM dd, yyyy");
-        return dateFormater.format(date);
-    }
-
-    private String getFormatTime(Date date){
-        DateFormat timeFormater = new SimpleDateFormat("h:mm a");
-        return timeFormater.format(date);
-    }
-
-    private int getColorMagniture(float magniture){
-        int circleColor = R.color.magnitude1;
-        switch(Float.valueOf(magniture).intValue()){
-            case 10:circleColor = R.color.magnitude10plus;
-                break;
-            case 9:circleColor = R.color.magnitude9;
-                break;
-            case 8:circleColor = R.color.magnitude8;
-                break;
-            case 7:circleColor = R.color.magnitude7;
-                break;
-            case 6:circleColor = R.color.magnitude6;
-                break;
-            case 5:circleColor = R.color.magnitude5;
-                break;
-            case 4:circleColor = R.color.magnitude4;
-                break;
-            case 3:circleColor = R.color.magnitude3;
-                break;
-            case 2:circleColor = R.color.magnitude2;
-                break;
-            case 1:
-            default: circleColor = R.color.magnitude1;
-                break;
-        }
-        return ContextCompat.getColor(getContext(), circleColor);
-    }
 
 
 }
