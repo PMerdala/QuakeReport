@@ -26,7 +26,8 @@ import java.util.ArrayList;
 
 public class EarthquakeActivity extends AppCompatActivity {
 
-    private static final String USGS_REQUEST_URL = "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2014-01-01&endtime=2014-12-01&minmagnitude=5";
+    private static final String USGS_REQUEST_URL = "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2014-01-01&endtime=2014-12-01&minmagnitude=6";
+    //private static final String USGS_REQUEST_URL = "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&eventtype=earthquake&orderby=time&minmag=6&limit=10";
     public static final int PLEASE_WAIT_DIALOG = 1;
     ListView listView = null;
 
@@ -85,9 +86,9 @@ public class EarthquakeActivity extends AppCompatActivity {
         }
     }
 
-    public void changeToDetail(View view) {
-        UtilIntent.executeIntent(this,EarthquakeDetailActivity.class);
-    }
+//    public void changeToDetail(View view) {
+//        UtilIntent.executeIntent(this,EarthquakeDetailActivity.class);
+//    }
 
     private class QuakeReportAsyncTask extends AsyncTask<String, Void, ArrayList<EarthquakeData>> {
 

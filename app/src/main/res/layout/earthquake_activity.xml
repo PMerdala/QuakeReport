@@ -9,11 +9,6 @@
     android:orientation="vertical"
     tools:context="com.example.pmerdala.quakereport.EarthquakeActivity" >
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Szczegóły"
-        android:onClick="changeToDetail"/>
 <ListView  android:id="@+id/quake_list_view_id"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
