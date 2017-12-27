@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,10 +7,30 @@
     android:divider="@null"
     android:dividerHeight="0dp"
     android:orientation="vertical"
-    tools:context="com.example.pmerdala.quakereport.EarthquakeActivity" >
+    tools:context="com.example.pmerdala.quakereport.EarthquakeActivity">
 
-<ListView  android:id="@+id/quake_list_view_id"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    />
-</LinearLayout>
+
+    <ListView
+        android:id="@+id/quake_list_view_id"
+        android:divider="@null"
+        android:dividerHeight="0dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <TextView
+        android:id="@+id/empty_list_item"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="No Data"
+        android:visibility="gone"
+        android:textAppearance="?android:textAppearanceMedium"
+        />
+    <ProgressBar
+        android:id="@+id/loading_progress"
+        style="@style/Widget.AppCompat.ProgressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        />
+</RelativeLayout>

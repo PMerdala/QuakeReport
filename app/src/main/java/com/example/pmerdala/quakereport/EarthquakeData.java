@@ -3,6 +3,7 @@ package com.example.pmerdala.quakereport;
 
 import android.util.Log;
 
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -13,7 +14,7 @@ import java.util.Locale;
  * Created by merdala on 2017-11-02.
  */
 
-public class EarthquakeData {
+public class EarthquakeData implements Serializable{
 
     final float magnitude;
     final String place;

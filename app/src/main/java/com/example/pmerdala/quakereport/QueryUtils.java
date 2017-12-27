@@ -23,12 +23,14 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by merdala on 2017-11-03.
  */
 
 public class QueryUtils {
+    final static String LOG_TAG = EarthquakeActivity.class.getSimpleName();
     /**
      * Sample JSON response for a USGS query
      */
@@ -57,10 +59,13 @@ public class QueryUtils {
      * Return a list of {@link EarthquakeData} objects that has been built up from
      * parsing a JSON response.
      */
-    public static ArrayList<EarthquakeData> extractEarthquakes() {
-        return extractEarthquakes(SAMPLE_JSON_RESPONSE);
-    }
+    //public static ArrayList<EarthquakeData> extractEarthquakes() {
+    //    return extractEarthquakes(SAMPLE_JSON_RESPONSE);
+    //}
 
+    private static void info(String msg){
+        Log.i(LOG_TAG,"TEST: " + msg);
+    }
     private static String readFromStream(InputStream inputStream) throws IOException {
         if (inputStream == null) {
             return null;
@@ -76,7 +81,7 @@ public class QueryUtils {
         return json.toString();
     }
 
-    public static URL createURL(String requestUrl) {
+    private static URL createURL(String requestUrl) {
         URL url = null;
         try {
             url = new URL(requestUrl);
@@ -86,8 +91,43 @@ public class QueryUtils {
         return url;
     }
 
+    public static List<EarthquakeData> fetchListEarthquakeData(String urlString){
+        info("Start fetchListEarthquakeData");
+        if (urlString == null){
+            info("End urlString null fetchListEarthquakeData");
+            return null;
+        }
+        URL url = QueryUtils.createURL(urlString);
+        if (url==null){
+            info("End url null fetchListEarthquakeData");
+            return null;
+        }
+        String jsonResponse =QueryUtils.makeHttpRequests(url);
+        ArrayList<EarthquakeData> earthquakes = QueryUtils.extractEarthquakes(jsonResponse);
+        try {
+            Thread.sleep(2000);
+        }catch (InterruptedException e){
+            e.printStackTrace();
+        }
+        info("End fetchListEarthquakeData");
+        return earthquakes;
 
-    public static String makeHttpRequests(URL url) {
+    }
+
+    public static EarthquakeData fetchEarthquakeData(String urlString){
+        if (urlString == null){
+            return null;
+        }
+        URL url = QueryUtils.createURL(urlString);
+        if (url==null){
+            return null;
+        }
+        String jsonResponse = QueryUtils.makeHttpRequests(url);
+        EarthquakeData earthquake = QueryUtils.extractEarthquake(jsonResponse,urlString);
+        return earthquake;
+    }
+
+    private static String makeHttpRequests(URL url) {
         HttpURLConnection connection = null;
         InputStream inputStream = null;
         String jsonResponse = null;
@@ -180,7 +220,7 @@ public class QueryUtils {
 
     }
 
-    public static ArrayList<EarthquakeData> extractEarthquakes(String json) {
+    private static ArrayList<EarthquakeData> extractEarthquakes(String json) {
         ArrayList<EarthquakeData> earthquakes = new ArrayList<>();
         if (!TextUtils.isEmpty(json)) {
             try {
@@ -197,7 +237,7 @@ public class QueryUtils {
         return earthquakes;
     }
 
-    public static EarthquakeData extractEarthquake(String json, String urlDetailDefault) {
+    private static EarthquakeData extractEarthquake(String json, String urlDetailDefault) {
         EarthquakeData earthquakeData = null;
         if (!TextUtils.isEmpty(json)) {
             try {

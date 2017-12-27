@@ -64,7 +64,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        tools:text="Sep 26, 2016"
+        tools:text="May 26, 2014"
         android:gravity="bottom"
         android:textSize="12sp"
         android:textColor="@color/datetime_text_view"
